@@ -1,16 +1,7 @@
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. GREETER.
-       
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
-       01 WS-NAME PIC X(20).
+       PROGRAM-ID. HELLOWORLD.
        
        PROCEDURE DIVISION.
-       MAIN-PARAGRAPH.
-           MOVE "World" TO WS-NAME.
-           PERFORM GREET-PROCEDURE.
+           DISPLAY "Hello, world!".
            STOP RUN.
-       
-       GREET-PROCEDURE.
-           DISPLAY "Hello, " WS-NAME.
 
