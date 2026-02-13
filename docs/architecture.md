@@ -278,6 +278,83 @@ The architecture is designed for extensibility:
 3. **Custom Prompts**: Modify prompts in `src/core/prompts.py`
 4. **New LLM Providers**: Automatically supported via LiteLLM
 
+## Tool Orchestration: Deterministic vs LLM-Controlled
+
+Atlas supports two modes of tool use, suitable for comparing **deterministic** vs **LLM-controlled** tool orchestration in agent design.
+
+### Deterministic tool orchestration (default)
+
+The pipeline is fixed: one tool (the current edit format) is forced each turn. The orchestrator does not choose tools; the LLM is constrained to produce output for that single tool.
+
+```mermaid
+flowchart LR
+    subgraph Deterministic["Deterministic orchestration"]
+        U1[User message] --> C1[Build context]
+        C1 --> API1[LLM API]
+        API1 -->|"tool_choice = single edit tool"| F1[LLM must call that tool]
+        F1 --> P1[Parse response]
+        P1 --> A1[Apply edits / run tool]
+        A1 --> U1
+    end
+```
+
+- **API**: `tools = [single_edit_function]`, `tool_choice = { function: name }` (force that function).
+- **Control flow**: System chooses the tool; LLM only fills in arguments (e.g. edit content).
+- **Use case**: Predictable, single-step code edits per turn.
+
+### LLM-controlled tool orchestration (`--llm-controlled-tools`)
+
+All registered tools (e.g. edit, git, web search) are exposed; the LLM decides which tool(s) to call and in what order. The system executes tools and feeds results back until the LLM returns a final text response.
+
+```mermaid
+flowchart LR
+    subgraph LLMControlled["LLM-controlled orchestration"]
+        U2[User message] --> C2[Build context]
+        C2 --> API2[LLM API]
+        API2 -->|"tools = all tools, no tool_choice"| D[LLM decides]
+        D -->|"tool_calls"| E[Execute tools]
+        E --> R[Tool results]
+        R --> API2
+        D -->|"text only"| Done[Done]
+    end
+```
+
+- **API**: `tools = [all_registered_tools]`, no `tool_choice` (LLM chooses).
+- **Control flow**: LLM chooses tool(s) → system executes → results appended to conversation → LLM continues (loop until text-only response or limit).
+- **Use case**: Multi-step workflows (e.g. search, then edit, then commit) with one agent.
+
+### Side-by-side comparison (for papers)
+
+```mermaid
+flowchart TB
+    subgraph Det["Deterministic"]
+        direction TB
+        D1[User + context] --> D2[LLM]
+        D2 -->|"Forced: one tool"| D3[Single tool output]
+        D3 --> D4[Apply]
+        D4 --> D1
+    end
+
+    subgraph LLM["LLM-controlled"]
+        direction TB
+        L1[User + context] --> L2[LLM]
+        L2 --> L3{Tool or text?}
+        L3 -->|"Tool call(s)"| L4[Execute tools]
+        L4 --> L5[Append results]
+        L5 --> L2
+        L3 -->|"Text"| L6[Done]
+    end
+```
+
+| Aspect | Deterministic | LLM-controlled |
+|--------|---------------|----------------|
+| Tool selection | System (fixed per turn) | LLM |
+| API `tool_choice` | Set (force one function) | Not set |
+| Turn structure | One tool invocation per turn | Multi-tool loop until text |
+| Typical use | Single-edit code generation | Multi-step (search, edit, git, etc.) |
+
+Implementation details: **Deterministic** — `src/core/models.py` `send_completion(..., llm_controlled_tools=False)` sets `tool_choice` to the single edit function. **LLM-controlled** — `llm_controlled_tools=True` passes all tools from `src/core/tools.py` (and command tools from `src/core/tool_registry.py`), no `tool_choice`; `base_coder._execute_tool_calls_loop()` runs the tool-call loop.
+
 ## Security Considerations
 
 - **API Key Management**: Secure storage via environment variables
