@@ -26,7 +26,7 @@
   ],
   "license": "Apache-2.0",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1"
+    "@modelcontextprotocol/sdk": "^1.31.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.21",
