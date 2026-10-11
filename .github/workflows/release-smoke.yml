@@ -28,7 +28,7 @@ jobs:
       - name: Verify install script metadata
         run: |
           set -euo pipefail
-          grep -q 'astrio-labs/forall' install.sh
+          grep -q 'astrio-labs/forall-mcp' install.sh
           grep -q 'FORALL_INSTALL_REPO' install.sh
           grep -q 'forall.astrio.app/dashboard' install.sh
           bash -n install.sh

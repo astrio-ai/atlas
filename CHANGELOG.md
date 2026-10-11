@@ -4,6 +4,10 @@ All notable changes to this public repository are documented here.
 
 ## Unreleased
 
+- `install.sh`, the README, the security policy, the issue template and the npm
+  package now name this repository, `astrio-labs/forall-mcp`. Its old name,
+  `astrio-labs/forall`, now belongs to another repository, so the redirect no
+  longer reaches the releases here.
 - Security: verification snapshots no longer follow symlinked root manifests or a
   symlinked `.forall` directory, either of which could send files from outside
   the workspace to hosted verification.

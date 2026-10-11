@@ -2,7 +2,7 @@
 # Forall installer — downloads compressed prebuilt binaries from GitHub Releases.
 set -euo pipefail
 
-REPO="${FORALL_INSTALL_REPO:-astrio-labs/forall}"
+REPO="${FORALL_INSTALL_REPO:-astrio-labs/forall-mcp}"
 INSTALL_DIR="${FORALL_INSTALL_DIR:-${HOME}/.local/bin}"
 BINARY_NAME="forall"
 
