@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://github.com/astrio-labs/forall">
+  <a href="https://github.com/astrio-labs/forall-mcp">
     <picture>
       <source srcset="assets/forall_bg.png">
       <img src="assets/forall_bg.png" alt="Forall Background">
@@ -59,7 +59,7 @@ Add `~/.local/bin` to your `PATH` if needed, then run `forall --version`.
 
 On first launch, sign in with your [Forall account](https://forall.astrio.app) — your browser opens, no API key to paste. Chat on your plan's hosted models, or bring your own model API key (OpenAI, OpenRouter, Anthropic (Claude), Google Gemini, Azure OpenAI, or Claude via Amazon Bedrock). Then `forall init` in a git repo and start working.
 
-> **Note:** A binary release must exist on [GitHub Releases](https://github.com/astrio-labs/forall/releases) before install succeeds.
+> **Note:** A binary release must exist on [GitHub Releases](https://github.com/astrio-labs/forall-mcp/releases) before install succeeds.
 
 ### 2. MCP verify-only
 
